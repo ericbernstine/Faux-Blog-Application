@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faux blog site</title>
+    <!-- style sheets -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Doodle+Shadow&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="/master.css" type="text/css">
+    <!-- jquery cdn -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<!-- edit post function -->
+<script>
+    function editPost(postId){
+        // change the hidden (empty) value in the postIdField input to the postId num passed to this function. 
+        $('#postIdField').val(postId);
+        // submit the /edit post form, AFTER the input value has been updated to the current post ID
+        $('#editForm').submit(); 
+    }
+    function deletePost(postId){
+       $('#deletePostField').val(postId);
+        $('#deleteForm').submit();
+    }
+</script>
+</head>
+<body>
+    <div class="headingSection">
+    <h1 class="heading">Welcome to the Faux Blog Home Page</h1>
+    <h3 class="heading">Go make some posts!</h3>
+    <!-- Basic submit form that contains a text box and sumbission button, HANDLES INTIAL POSTS -->
+    <form action="/submit" method="POST" class="inputSection">
+            <div class="mb-3" id="titleInput">
+                <input type="text" placeholder="Post Title" class="form-control" name="title" id="exampleFormControlInput1">
+            </div>
+            <div class="mb-3" id="postInput">
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="text"></textarea>
+            </div>
+          <button type="submit" class="btn btn-outline-dark" id="submitButton">Submit</button> 
+    </form>
+</div>
+<br>
+<div class="postBack">
+
+    <div class="postMain">
+    <!-- check if there are any posts avaiable -->
+    <% if (locals.posts) { %>
+        <!-- loop through posts if avaiable, start with the most recent post -->
+        <% for (let i = posts.length - 1; i >= 0; i--) { %>
+            <!-- display the most recent titles -->
+            <p id="title<%= i %>" class="title"><strong><%= titles[i] %></strong></p>
+            <!-- display the mos recent post  -->
+            <p id="post-<%= i %>" class="post"><%= posts[i] %> </p>
+            <!-- use button to trigger editPost function, passing the current iteration (i) as an argument  -->
+            <div class="newButton">
+            <button onclick="editPost(<%=i%>)" id="postNum<%= i %>" class="EditBuffer btn btn-outline-secondary">Edit</button>
+            <button onclick="deletePost(<%=i%>)" class="btn btn-outline-danger">Delete</button>
+            </div>
+        <% } %>
+    <% } else { %>
+        <p>Awaiting Posts...</p>
+    <% } %>
+    
+    <!-- "editForm" Post form with the endpoint of /edit -->
+    <form id="editForm" action="/edit" method="post" style="display:none">
+    <!-- hidden input value that is set when the editPost function is invoked.  -->
+        <input type="hidden" id="postIdField" name="postId"> 
+    </form>
+
+    <form id="deleteForm" action="/delete" method="post" style="display: none">
+    
+        <input type="hidden" id="deletePostField" name="deletePost">
+
+    </form>
+
+</div>
+</div>
+</body>
+</html>
